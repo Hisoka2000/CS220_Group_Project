@@ -31,3 +31,12 @@ api = tweepy.API(auth)
 words_received = 0
 words_per_hour = 0
 seconds_spent = 1
+
+# Working with time (normalizing timestamps)
+def normalize_timestamp(time):
+	mytime = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+	mytime += timedelta(hours = 4)
+	return (mytime.strftime("%Y-%m-%d %H:%M:%S"))
+
+producer = KafkaProducer(bootstrap_servers = 'localhost:9092')
+topic_name = 'tweets-lambdal'
