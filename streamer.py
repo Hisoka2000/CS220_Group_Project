@@ -6,16 +6,16 @@ import os
 import appscript
 
 #Running the zookeeper server
-appscript.app('Terminal').do_script('cd ' + os.path.dirname(os.path.realpath(__file__)) + '/kafka_2.12-2.3.0 && bin/zookeeper-server-start.sh config/zookeeper.properties')
+subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/zookeeper-server-start.sh config/zookeeper.properties)", shell=True)
 time.sleep(15)
 #Running the kafka server
-appscript.app('Terminal').do_script('cd ' + os.path.dirname(os.path.realpath(__file__)) + '/kafka_2.12-2.3.0 && bin/kafka-server-start.sh config/server.properties')
+subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/kafka-server-start.sh config/server.properties)", shell=True)
 time.sleep(15)
 #Creating topic
-appscript.app('Terminal').do_script('cd ' + os.path.dirname(os.path.realpath(__file__)) + '/kafka_2.12-2.3.0 && bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic tweets-lambdal')
+subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic tweets-lambdal)", shell=True)
 time.sleep(15)
 #Creating consumer
-appscript.app('Terminal').do_script('cd ' + os.path.dirname(os.path.realpath(__file__)) + '/kafka_2.12-2.3.0 && bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic tweets-lambdal --from-beginning')
+subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic tweets-lambdal --from-beginning)", shell=True)
 time.sleep(15)
 
 #Keys for twitter API authentication
