@@ -38,6 +38,9 @@ def normalize_timestamp(time):
 	mytime += timedelta(hours = 4)
 	return (mytime.strftime("%Y-%m-%d %H:%M:%S"))
 	
+producer = KafkaProducer(bootstrap_servers = 'localhost:9092')
+topic_name = 'tweets-lambdal'
+
 #Gets the twitter data
 def get_twitter_data():
 	global words_received
@@ -67,8 +70,6 @@ def get_twitter_data():
 		record += '\n'
 		producer.send(topic_name, str.encode(record))
 
-producer = KafkaProducer(bootstrap_servers = 'localhost:9092')
-topic_name = 'tweets-lambdal'
 #Setting up the consumer
 consumer = KafkaConsumer(
 	bootstrap_servers='localhost:9092',
@@ -83,14 +84,14 @@ def periodic_work(interval):
 	global seconds_spent
 	while True:
 		get_twitter_data()
-for message in consumer:
-	print(message)
-words_per_hour = words_received * 3600/seconds_spent
-seconds_spent += 1
-if seconds_spent == 3600:
-	 words_received = 0
-	  seconds_spent = 1
-print("------------------------" + str(words_per_hour) + "words per hour")
-producer.send(topic_name, str.encode("--------------------" + str(words_per_hour) + "words per hour"))
-time.sleep(interval)
+		for message in consumer:
+			print(message)
+		words_per_hour = words_received * 3600/seconds_spent
+		seconds_spent += 1
+		if seconds_spent == 3600:
+			 words_received = 0
+			  seconds_spent = 1
+		print("------------------------" + str(words_per_hour) + "words per hour")
+		producer.send(topic_name, str.encode("--------------------" + str(words_per_hour) + "words per hour"))
+		time.sleep(interval)
 periodic_work(1)
