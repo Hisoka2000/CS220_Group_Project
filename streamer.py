@@ -4,19 +4,37 @@ from kafka import KafkaConsumer, KafkaProducer
 from datetime import datetime, timedelta
 import os
 import subprocess
+import socket
 
-#Running the zookeeper server
-subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/zookeeper-server-start.sh config/zookeeper.properties)", shell=True)
-time.sleep(15)
-#Running the kafka server
-subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/kafka-server-start.sh config/server.properties)", shell=True)
-time.sleep(15)
-#Creating topic
-subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic tweets-lambdal)", shell=True)
-time.sleep(15)
-#Creating consumer
-subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka_2.12-2.3.0 " + "&& bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic tweets-lambdal --from-beginning)", shell=True)
-time.sleep(15)
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
+if os.name == 'nt':
+	#Running the zookeeper server
+	subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "\kafka " + "&& bin\windows\zookeeper-server-start.bat config\zookeeper.properties)", shell=True)
+	time.sleep(15)
+	#Running the kafka server
+	subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "\kafka " + "&& bin\windows\kafka-server-start.bat config\server.properties)", shell=True)
+	time.sleep(15)
+	#Creating topic
+	subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "\kafka " + "&& bin\windows\kafka-topics.bat --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic tweets-lambdal)", shell=True)
+	time.sleep(15)
+	#Creating consumer
+	subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "\kafka " + "&& bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic tweets-lambdal --from-beginning)", shell=True)
+	time.sleep(15)
+else:
+	#Running the zookeeper server
+	subprocess.Popen("/kafka/bin/zookeeper-server-start.sh /kafka/config/zookeeper.properties", shell=True)
+	time.sleep(15)
+	#Running the kafka server
+	subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka " + "&& bin/kafka-server-start.sh config/server.properties)", shell=True)
+	time.sleep(15)
+	#Creating topic
+	subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka " + "&& bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic tweets-lambdal)", shell=True)
+	time.sleep(15)
+	#Creating consumer
+	subprocess.Popen("(cd " + os.path.dirname(os.path.realpath(__file__)) + "/kafka " + "&& bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic tweets-lambdal --from-beginning)", shell=True)
+	time.sleep(15)
 
 #Keys for twitter API authentication
 consumer_key = "eejYxthKBRYGPUXehkNiQZD03"
@@ -37,7 +55,7 @@ def normalize_timestamp(time):
 	mytime = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
 	mytime += timedelta(hours = 4)
 	return (mytime.strftime("%Y-%m-%d %H:%M:%S"))
-	
+
 producer = KafkaProducer(bootstrap_servers = 'localhost:9092')
 topic_name = 'tweets-lambdal'
 
